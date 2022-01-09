@@ -31,6 +31,6 @@ void print_2D(char **inputBase){
 	    i++;
         putchar(' ');
     }
-    printf("\n\n");
+    printf("\n");
 }
 
