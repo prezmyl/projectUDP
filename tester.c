@@ -23,7 +23,7 @@ int determin_command(char *cmd){
 }
 
 
-/*char** dyn_copy2D(const char **src){
+/*char** dyn_copy_cmdArgv(const char **src){
     if (!src || !*src) return NULL; 
     char **dest = NULL;
     
@@ -58,22 +58,22 @@ int determin_command(char *cmd){
     return dest;
 }*/
 
-void dyn_copy2D(char** parsedBuffer, char** dest){
+void dyn_copy_cmdArgv(char** parsedBuffer, char** dest){
 
     int i = 0;
     int j = 0;
     int len = 0;
 
-    printf("\n\ncoppied parsed\n");
+    printf("\ncoppied parsed\n");
     print_2D(parsedBuffer);
-    printf("\ncoppied parsed\n\n");
+    printf("coppied parsed\n\n");
 
-    while (parsedBuffer[i]){
-        len = strlen(parsedBuffer[i]) + 1;
+    while (parsedBuffer[i+1]){
+        len = strlen(parsedBuffer[i+1]) + 1;
         dest[i] = malloc(sizeof(char) * (len +1));
         j = 0;
-        while(parsedBuffer[i][j]){
-            dest[i][j] = parsedBuffer[i][j];
+        while(parsedBuffer[i+1][j]){
+            dest[i][j] = parsedBuffer[i+1][j];
             j++;
         }
         
@@ -82,9 +82,9 @@ void dyn_copy2D(char** parsedBuffer, char** dest){
 
     }
     dest[i] = NULL;
-    printf("\n\ncoppied\n");
+    printf("\ncoppied\n");
     print_2D(dest);
-    printf("\ncoppied\n\n");
+    printf("coppied\n");
 }
 
 void free_2D(char **data){
@@ -386,11 +386,14 @@ int main (int argc, char* argv[]){
 	//REPL
     char *command = NULL;
     char **parsed_command = NULL;
-    char** stripped_cmd_argv = NULL;
+    char **stripped_cmd_argv = NULL;
+    int argUsedFLAG= 1;
         
     size_t commandArgc = 0;
     
     while (true) {
+        
+        //ty ukazatele co nikam nepredali alokovanou pamet musim a chci do nich znova zapisovat musim uvolnit vynulovat
         if (command)
         {
             free(command);
@@ -402,13 +405,19 @@ int main (int argc, char* argv[]){
             free_2D(parsed_command);
             parsed_command = NULL;
         }
- 
+
+        if (!argUsedFLAG)
+        {
+            free_2D(stripped_cmd_argv);
+        }
+        
+
 		print_promt();
 		command = dyn_read_line();
         parsed_command = input_line_parser(command, &commandArgc, ' ');
         stripped_cmd_argv = (char**)malloc(/*stripped_cmd_argv,*/ sizeof(char*) * (commandArgc + 2)); //argc ukazuje plus jedna pac prvni radek nekopiruju, takze pro null uz mam misto
-       // memset(stripped_cmd_argv, 0, sizeof(char*) * (commandArgc + 1));
-
+        memset(stripped_cmd_argv, 0, sizeof(char*) * (commandArgc + 1));
+        argUsedFLAG = 0;
 
         print_2D(parsed_command);
         printf("commandArgc: %zu\n",commandArgc);
@@ -446,11 +455,12 @@ int main (int argc, char* argv[]){
                     continue;
                 }
 
-                /*stripped_cmd_argv =*/ dyn_copy2D((char**)parsed_command, stripped_cmd_argv);               
+                /*stripped_cmd_argv =*/ dyn_copy_cmdArgv((char**)parsed_command, stripped_cmd_argv);               
 				//free_2D(parsed_command);
-                free_2D(stripped_cmd_argv);
-                //add_entry(&myList, stripped_cmd_argv);
-               // free_2D(stripped_cmd_argv);
+                //free_2D(stripped_cmd_argv);
+                add_entry(&myList, stripped_cmd_argv);
+                argUsedFLAG = 1;
+                //free_2D(stripped_cmd_argv);
 				printf("addrow initiating\n");
                 print_entry(&myList);
 				continue;
