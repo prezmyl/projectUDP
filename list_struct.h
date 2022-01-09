@@ -69,60 +69,137 @@ void add_col(list* myList, /*entry* current ,*/char **stripped_cmd_argv){
     (myList->nCols)++;
 }
 
-/*void add_col(list* myList, char **parsedCols){
-    if (myList == NULL) return;
-
-        size_t len = 0;
-        size_t nCols = myList->nCols;
-        printf("add_col() nCols: %zu\n", nCols);
-        size_t i = 0;
-        size_t j = 0;
-        entry* current = myList->first;
-        while (current != NULL){
-            dyn_alloc2d(nCols + 2,)
+int col_match(list* myList, char *str){
+    if (!myList || !str || !*str)
+    {
+        return -1;
+    }
+    int i = 0;
+    entry* current = myList->first;
+    while (current->word[i])
+    {
+        if (!strcmp(current->word[i], str))
         {
+            return i;
+        }
+        
+        i++;
+    }
+    return -1;
+}
 
-}*/
+int count_average(list* myList, char *str, double *avr){
+    if (!myList || !str || !*str)
+    {
+        return 1;
+    }
 
-/*void add_col(list* myList, char **parsedCols){
-    if (myList == NULL) return;
+    int i = 0;
+    if ((i = col_match(myList, str)) < 0){
+        return 2;
+    }
+  
+    double sum = 0;
+    double count = myList->nRows;
+    double num = 0;
 
-    size_t len = 0;
-    size_t nCols = myList->nCols;
-    printf("add_col() nCols: %zu\n", nCols);
-    size_t i = 0;
-    size_t j = 0;
     entry* current = myList->first;
     while (current != NULL)
     {
-        printf("parsed[%d]%s\n", i,parsedCols[i]);
-        printf("pred realoc\n");
-        print_2D(current->word);
-        *(current)->word = realloc(current->word, sizeof(char*) * nCols + 2); //!!!!!!!!!
-        printf("po realoc\n");
-        print_2D(current->word);
-        len = strlen(parsedCols[i]);
-        current->word[nCols + 1] = malloc(sizeof(char)*(len + 1));
-        j = 0;
-        while (parsedCols[i][j])
-        {
-            current->word[nCols][j] = parsedCols[i][j];
-            j++;
-        }
-        current->word[nCols + 1][j] = 0;
-        printf("po prekopirovani slova: %s v %d-tem radku\n", current->word[nCols], i);
-        print_2D(current->word);
-        current->word[nCols + 2] = NULL;
-        printf("addcol() one entry updated\n");
-        print_2D(current->word);
-       
+        num = atof(current->word[i]);
+        sum += num;
         current = current->next;
-        i++;
     }
-    (myList->nCols)++;
-    printf("add_col() nCols: %zu\n", myList->nCols);
+
+    *avr = sum / (myList->nRows-1); //nRows je tam zapocitan i prvni radek s hlavickou sloupcu
+    return 0;
+}
+
+int count_sum(list* myList, char *str, double *sum){
+    if (!myList || !str || !*str)
+    {
+        return 1;
+    }
+
+    int i = 0;
+    if ((i = col_match(myList, str)) < 0){
+        return 2;
+    }
+  
     
-}*/
+    double count = myList->nRows;
+    double num = 0;
+
+    entry* current = myList->first;
+    while (current != NULL)
+    {
+        num = atof(current->word[i]);
+        *sum += num;
+        current = current->next;
+    }
+
+    return 0;
+}
+
+int find_max(list* myList, char *str, double *max){
+    if (!myList || !str || !*str)
+    {
+        return 1;
+    }
+
+    int i = 0;
+    if ((i = col_match(myList, str)) < 0){
+        return 2;
+    }
+  
+    
+    double count = myList->nRows;
+    double num = 0;
+
+    entry* current = myList->first;
+    *max = atof(current->word[i]);
+    while (current != NULL)
+    {
+        num = atof(current->word[i]);
+        if (num > *max){
+            *max = num;
+        }
+        current = current->next;
+    }
+
+    return 0;
+}
+
+int find_min(list* myList, char *str, double *min){
+    if (!myList || !str || !*str)
+    {
+        return 1;
+    }
+
+    int i = 0;
+    if ((i = col_match(myList, str)) < 0){
+        return 2;
+    }
+  
+    
+    double count = myList->nRows;
+    double num = 0;
+
+    entry* current = myList->first;
+            
+    *min = atof(current->word[i]);
+    printf("%f string: %s", *min, current->word[0]);
+    while (current != NULL)
+    {
+        num = atof(current->word[i]);
+        if (num < *min){
+            *min = num;
+        }
+        current = current->next;
+    }
+
+    return 0;
+}
 
 //bude pridavat vlastne radky
 void add_entry(list* myList, char** parsed_row){
