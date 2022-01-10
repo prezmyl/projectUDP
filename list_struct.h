@@ -12,7 +12,7 @@ void **dyn_alloc2d(size_t rows, size_t colSizes[rows]);
 char *dyn_strcpy(const char *str);
 
 typedef struct entry{
-	char **word; //word == column ..to bych moh taky dynamicky alokovat....nejdriv vybuduj dynamicke alokvani struktur 2d <- do char pak ulozim dyn alkovanou pamet se slovem dyn_read() should do
+	char **word; 
 	struct entry *next;
 }entry;
 
@@ -60,21 +60,6 @@ void fprint_to_file(FILE* f, list* myList){
     }
 }
 
-/*void print_to_file( FILE* f, list *myList){
-    if (!myList)
-    {
-        return;
-    }
-    
-    entry* current = myList->first;
-    while (current != NULL)
-    {
-        fprintf(f, "anus\n");
-        //print_2D(current->word);
-        current = current->next;
-    }
-
-}*/
 
 void print_entry(list *myList){
     if (!myList)
@@ -97,15 +82,10 @@ void add_col(list* myList, /*entry* current ,*/char **stripped_cmd_argv){
     size_t i = 0;
     while (current != NULL)
     {
-        printf("pred realoc\n");
-        print_2D(current->word);
         current->word = (char**)realloc(current->word, sizeof(char*) * (myList->nCols + 2));  
         current->word[myList->nCols] = dyn_strcpy(stripped_cmd_argv[i]); ///tady dyn strcpy a pointer ulozit a pak uvolnit cely strepped..pac jinak cast pointru bude ulozena do elementu a ukazovat na to misto
         // printf("po prekopirovani slova: %s v %d-tem radku\n", current->word[myList.nCols + 1], i);
         current->word[myList->nCols + 1] = NULL; //ted pole alloc -1 je max oproti malloc(alloc)
-        printf("po realoc\n");
-        print_2D(current->word);
-
         current = current->next;
         i++;
     }
@@ -195,7 +175,7 @@ int find_max(list* myList, char *str, double *max){
     if ((i = col_match(myList, str)) < 0){
         return 2;
     }
-    printf("i =%d\n",i);
+
     
     double count = myList->nRows;
     double num = 0;
@@ -204,9 +184,7 @@ int find_max(list* myList, char *str, double *max){
     *max = atof(current->word[i]);
     while (current != NULL)
     {   
-        printf("pro current[%d] je slovo %s\n", i, current->word[i]);
         num = atof(current->word[i]);
-        printf("num = %f\n",num);
         if (num > *max){
             *max = num;
         }
@@ -226,7 +204,6 @@ int find_min(list* myList, char *str, double *min){
     if ((i = col_match(myList, str)) < 0){
         return 2;
     }
-    printf("i =%d\n",i);
     
     
     double count = myList->nRows;
@@ -235,16 +212,11 @@ int find_min(list* myList, char *str, double *min){
     entry* current = myList->first->next;
             
     *min = atof(current->word[i]);
-    printf("min= %f\n",*min);
-    printf("%f string: %s", *min, current->word[0]);
     while (current != NULL)
     {
-        printf("pro current[%d] je slovo %s\n", i, current->word[i]);
         num = atof(current->word[i]);
-        printf("num = %f\n",num);
         if (num < *min){
             *min = num;
-            printf("min= %f\n",*min);
         }
         current = current->next;
     }
@@ -271,7 +243,7 @@ void add_entry(list* myList, char** parsed_row){
         myList->last = toInsert; //v list zmenim last
     }
     
-     printf("\npocet radku: %zu\n", ++(myList->nRows));; //!!!!!!!!!!! nevim jestli to zvizi cislo nebo co, cekni
+    ++(myList->nRows);
  }
 
 //bude slouzit k odstraneni postupne vsech entry seznamu a dealokaci
@@ -299,7 +271,7 @@ void erase_entry(list* myList){
     free(toDelete);
     toDelete = NULL;
 
-    printf("\npocet radku: %zu\n", --(myList->nRows));
+    --(myList->nRows);
 }    
 
 

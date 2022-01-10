@@ -10,8 +10,6 @@ void print_promt(void){
 }
 
 
-
-//z buffru
 void print_line(char *dataLine){
     if (!dataLine) return;
 	for (size_t i = 0; dataLine[i]; i++){
