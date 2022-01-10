@@ -33,6 +33,49 @@ void init_list(list* myList){
 }
 
 
+void fprint_to_file(FILE* f, list* myList){
+    if (!myList)
+    {
+        return;
+    }
+    
+    entry* current = myList->first;
+    while (current != NULL)
+    {
+        size_t i = 0;
+	    while (current->word[i]){
+            
+           
+		    //fprintf(f,"%c",*(current->word +i));
+	         fprintf(f,current->word[i]);   
+
+        i++;
+        if (current->word[i] != NULL){
+            fputc(',',f);
+            fputc(' ',f);
+        }
+    }
+    fputc('\n',f);
+    current = current->next;
+    }
+}
+
+/*void print_to_file( FILE* f, list *myList){
+    if (!myList)
+    {
+        return;
+    }
+    
+    entry* current = myList->first;
+    while (current != NULL)
+    {
+        fprintf(f, "anus\n");
+        //print_2D(current->word);
+        current = current->next;
+    }
+
+}*/
+
 void print_entry(list *myList){
     if (!myList)
     {
@@ -74,8 +117,9 @@ int col_match(list* myList, char *str){
     {
         return -1;
     }
+    //jen ve first hlavicce hledam
     int i = 0;
-    entry* current = myList->first;
+    entry* current = myList->first; 
     while (current->word[i])
     {
         if (!strcmp(current->word[i], str))
@@ -103,7 +147,7 @@ int count_average(list* myList, char *str, double *avr){
     double count = myList->nRows;
     double num = 0;
 
-    entry* current = myList->first;
+    entry* current = myList->first->next; //preskakuji prvni, pac v prvnim entry elementu je hlavicka
     while (current != NULL)
     {
         num = atof(current->word[i]);
@@ -130,7 +174,7 @@ int count_sum(list* myList, char *str, double *sum){
     double count = myList->nRows;
     double num = 0;
 
-    entry* current = myList->first;
+    entry* current = myList->first->next;
     while (current != NULL)
     {
         num = atof(current->word[i]);
@@ -151,16 +195,18 @@ int find_max(list* myList, char *str, double *max){
     if ((i = col_match(myList, str)) < 0){
         return 2;
     }
-  
+    printf("i =%d\n",i);
     
     double count = myList->nRows;
     double num = 0;
 
-    entry* current = myList->first;
+    entry* current = myList->first->next;
     *max = atof(current->word[i]);
     while (current != NULL)
-    {
+    {   
+        printf("pro current[%d] je slovo %s\n", i, current->word[i]);
         num = atof(current->word[i]);
+        printf("num = %f\n",num);
         if (num > *max){
             *max = num;
         }
@@ -180,20 +226,25 @@ int find_min(list* myList, char *str, double *min){
     if ((i = col_match(myList, str)) < 0){
         return 2;
     }
-  
+    printf("i =%d\n",i);
+    
     
     double count = myList->nRows;
     double num = 0;
 
-    entry* current = myList->first;
+    entry* current = myList->first->next;
             
     *min = atof(current->word[i]);
+    printf("min= %f\n",*min);
     printf("%f string: %s", *min, current->word[0]);
     while (current != NULL)
     {
+        printf("pro current[%d] je slovo %s\n", i, current->word[i]);
         num = atof(current->word[i]);
+        printf("num = %f\n",num);
         if (num < *min){
             *min = num;
+            printf("min= %f\n",*min);
         }
         current = current->next;
     }
